@@ -1,0 +1,264 @@
+
+
+  s.test1.c: -r1.3 vs -r1 Page 1
+
+
+1,3c1
+< static char Sccsid[] ="%W% of %G%";
+< 
+< extern char buffers[][514];
+---
+> static char Sccsid[] = "%W% of %G%";
+8a7
+> #include "../h/systm.h"
+32,38c31,34
+< 	char	*nblocks;
+< 	int	cyloff;
+< } dv_sizes[] {
+< 	(40*240)-12,	39,	/* dv0: cyl 39 - 0 for /tmp */
+< 	(161*240)-12,	40,	/* dv1: cyl 40 - 200 for /u2 */
+< 		0,	0,	/* unused */
+< 		0,	0,	/* unused */
+---
+> 	daddr_t	nblocks;
+> 	unsigned int	cyloff;
+> } dv_sizes[] = {
+> 	(203*(daddr_t)240)-12,	0,	/* cyl 0 - 202 for /u2 */
+42a39,41
+> 		0,	0,	/* unused			*/
+> 		0,	0,	/* unused			*/
+> 		0,	0,	/* unused			*/
+52c51
+< int	dv_unit -1;
+---
+> int	dv_unit = -1;
+91a91
+>  * NOTE THIS IS INCOMPATIBLE WITH USE OF DISKSORT!!!
+97a98,114
+> /*
+>  * Monitoring device number
+>  */
+> #define DK_N	0
+> 
+> int dvinit_done;
+> 
+> dvopen(){
+> 	register i,j;
+> 	if(dvinit_done==0){
+> 		dvinit_done++;
+> 		DVADDR->dvcbr = CNBCOM|RECAL;
+> 		dvwait();
+> 		DVADDR->dvcbr = CNBCOM|RESET;
+> 		dvwait();
+> 	}
+> }
+105a123,127
+> /*
+> if(bp->b_bcount > 512)
+> 	printf("dv%d %d b%D at 0%o/%o\n", bp->b_flags&B_READ, bp->b_bcount,
+> 	bp->b_blkno, bp->b_xmem, bp->b_un.b_addr);
+> */
+109c131
+
+
+
+
+
+
+
+  s.test1.c: -r1.3 vs -r1 Page 2
+
+
+< 	   bp->b_blkno + ((bp->b_bcount + 511)/512) > p1->nblocks) {
+---
+> 	   bp->b_blkno + ((511 + bp->b_bcount)/512) > p1->nblocks) {
+113a136,137
+> 	if (bp->b_flags&B_PHYS)
+> 		mapalloc(bp);
+115c139
+< 	p2 = ldiv(bp->b_blkno, 240);
+---
+> 	p2 = bp->b_blkno / 240;
+117,120c141
+< 	if((minor(bp->b_dev)&01)==0)
+< 		p1 =- p2;
+< 	else
+< 		p1 =+ p2;
+---
+> 	p1 =+ p2;
+122c143
+< 	p2 = lrem(bp->b_blkno, 240);
+---
+> 	p2 = bp->b_blkno % 240;
+195a217
+> 	dk_busy |= 1<<DK_N;
+199c221
+< 		/*   waste time if we un-strap delay  */
+---
+> 		dvwait();
+202a225
+> 	dvwait();
+207a231
+> 		dvwait();
+219c243,244
+< 	if(bp->b_bcount > 512)
+---
+> 	dvwait();
+> 	if (bp->b_bcount >= 512)
+228c253
+< 	*hp = bp->b_addr;
+---
+> 	*hp = bp->b_un.b_addr;
+231a257,258
+> 	dk_numb[DK_N] += 1;
+> 	dk_wds[DK_N] += bp->b_bcount>>6;
+241a269
+> 	dk_busy &= ~(1<<DK_N);
+249c277
+< 			printf("dvssr %o\n",DVADDR->dvssr);
+---
+> 			printf("dvssr 0%o\n",DVADDR->dvssr);
+254a283
+> 			dvwait();
+272,274c301,302
+< 				printf("dvcsr %o on %o\n",csr, bp->b_dev);
+< /*		Add if you have hardware head problems  */
+< 				printf("dvblk= %d cyl= %d sec= %d hd=%d mar=%o\n",
+---
+
+
+
+
+
+
+
+  s.test1.c: -r1.3 vs -r1 Page 3
+
+
+> 				printf("dvcsr 0%o on 0%o\n",csr, bp->b_dev);
+> 				printf("dvblk= %D cyl= %d sec= %d hd=%d mar=0%o\n",
+277d304
+< /**/
+281a309
+> 			dvwait();
+289,290c317,319
+< 			if((bp->b_bcount =- 512) > 0) {	   /* more to do */
+< 				csr = bp->b_addr;
+---
+> 			bp->b_bcount = ( bp->b_bcount > 512 ? bp->b_bcount-512 : 0 );
+> 			if (bp->b_bcount > 0) {	/* more to do */
+> 				csr = bp->b_un.b_addr;
+293c322
+< 				if((unsigned)(csr =+ 256) > 0100000)
+---
+> 				if((unsigned int)(csr =+ 256) >= 0100000)
+296c325,328
+< 				bp->b_addr = csr;
+---
+> 				bp->b_un.b_addr = csr;
+> /*
+> printf("dvx 0%o/%o\n", bp->b_xmem, bp->b_un.b_addr);
+> */
+304,307c336
+< 							if(minor(bp->b_dev)&01)
+< 								csr++;
+< 							else
+< 								csr--;
+---
+> 							csr--;
+317c346
+< 	bp->b_resid = DVADDR->dvwcr + 0160000;
+---
+> 	bp->b_resid = -(DVADDR->dvwcr + 0160000);
+344c373
+< 	while(--cnt && (DVADDR->dvssr&DRVRDY));
+---
+> 	while(--cnt && (DVADDR->dvcsr&DRVRDY));
+352a382,394
+> dvwait()
+> {
+> 	register int cnt;
+> 
+> 	cnt = 0;
+> 	while(--cnt && (DVADDR->dvcsr&DRVRDY));
+> 	if (cnt==0) {
+> 		printf("diva not ready\n");
+> 		return(1);
+> 	} else
+> 		return(0);
+> }
+> 
+358c400
+< 	printf("dvflg %o\n",bp->b_flags);
+---
+
+
+
+
+
+
+
+  s.test1.c: -r1.3 vs -r1 Page 4
+
+
+> 	printf("dvflg 0%o\n",bp->b_flags);
+390c432
+< 	register c;
+---
+> 	daddr_t c;
+392,393c434
+< 	c = lshift(u.u_offset, -9);
+< 	c =+ ldiv(u.u_count+511, 512);
+---
+> 	c = (u.u_offset+u.u_count+511)>>BSHIFT;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

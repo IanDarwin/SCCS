@@ -1,0 +1,23 @@
+.TH SCCSDIFF 1
+.SH  NAME
+sccsdiff \- print the differences between two versions of an SCCS file
+.SH SYNOPSIS
+.B sccsdiff
+\fB-r\fR<oldversion>
+\fB-r\fR<newversion>
+s.file1 s.file2 ...
+.SH DESCRIPTION
+.B Sccsdiff
+will print a diff(1) listing of the differences between
+any two versions of the files stored in the given SCCS files.
+The two version numbers must be given in the form
+mmm[.nnn], where mmm is the release number and nnn is the optional level number.
+.PP
+The output will be passed through pr(1), and is suitable for printing.
+.SH "SEE ALSO"
+get(1), delta(1), admin(1), prt(1), sccsdiff(1), diff(1), pr(1)
+.SH AUTHOR
+This program was written by David R. Galloway.
+It is a re-implementation of the original Source
+Code Control System (SCCS)
+sccsdiff command, which was written at Bell Labs.

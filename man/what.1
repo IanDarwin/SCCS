@@ -1,0 +1,35 @@
+.TH WHAT 1
+.SH  NAME
+what \- search a file for SCCS identification strings
+.SH SYNOPSIS
+.B what
+file1 file2 ...
+.SH DESCRIPTION
+What
+will search one or more
+files
+for SCCS identification strings.
+These strings are used by SCCS to place unique identification information
+into source and binary files.
+The strings may contain version numbers, date of creation, program or module
+name, etc.
+See
+get(1)
+for the full list of possible identication strings.
+.PP
+More specifically,
+what
+will search
+for the sequence of 4 characters "@(#)"
+and print out the string following them until it
+reaches any of the characters in the set "\\0\\n\\r\\">".
+.PP
+Identification strings are normally placed in files automatically, but
+there is no reason why it can not also be done by hand.
+.SH "SEE ALSO"
+get(1), delta(1), admin(1), prt(1), sccsdiff(1)
+.SH AUTHOR
+This program was written by David R. Galloway.
+It is a re-implementation of the original Source
+Code Control System (SCCS)
+what command, which was written at Bell Labs.

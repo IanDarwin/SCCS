@@ -1,0 +1,78 @@
+rm -f s.test2.c test1.c test2.c
+
+get -r1.1 -k -s s.test1.c
+mv test1.c test2.c
+admin -itest2.c s.test2.c
+rm -f test2.c
+
+for i in 2 3 4 5 6 7 8 9
+	do
+	get -r1.$i -k -s s.test1.c
+	get -e -g -s s.test2.c
+	mv test1.c test2.c
+	delta s.test2.c > /dev/null <<!
+no comment\
+still no comment
+!
+	done
+
+: compare them
+
+cp s.test1.c s.test3.c
+chmod 644 s.test2.c s.test3.c
+ed - s.test2.c <<!
+g/^d/s;../../.. ..:..:.. [abcdefghijklmnopqrstuvwxyz]*;;
+w
+q
+!
+ed - s.test3.c <<!
+g/^d/s;../../.. ..:..:.. [abcdefghijklmnopqrstuvwxyz]*;;
+w
+q
+!
+diff s.test3.c s.test2.c > diffs
+if test -s diffs
+	then
+	echo "problem with get, admin or delta; differences are:"
+	cat diffs
+fi
+rm -f diffs s.test2.c s.test3.c
+
+: test prt
+
+prt s.test1.c > prt.out
+diff realprt.out prt.out > diffs
+if test -s diffs
+	then
+	echo "problem with prt, differences are:"
+	cat diffs
+fi
+rm -f diffs prt.out
+
+: test what
+
+get -s -r1.5 s.test1.c
+what s.test1.c test1.c>what.out
+diff realwhat.out what.out > diffs
+if test -s diffs
+	then
+	echo "problem with what, differences are:"
+	cat diffs
+fi
+rm -f diffs what.out test1.c
+
+: test sccsdiff
+
+sccsdiff -r1.3 -r1 s.test1.c > sccsdiff.out
+ed - sccsdiff.out <<!
+g/Page/s/^... .. ..:.. ....//
+w
+q
+!
+diff realsd.out sccsdiff.out > diffs
+if test -s diffs
+	then
+	echo "problem with sccsdiff, differences are:"
+	cat diffs
+fi
+rm -f diffs sccsdiff.out

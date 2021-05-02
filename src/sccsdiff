@@ -1,0 +1,32 @@
+: "sccsdiff -- a simple version of the SCCS command"
+: "Copyright (c) 1981 by David R. Galloway"
+: "@(#)sccsdiff	1.2 of 10/5/81"
+trap "rm -f $old $new > /dev/null; exit 1" 2
+
+case $# in
+[012])
+	echo "usage: sccsdiff -r<old> -r<new> s.file1 s.file2 ..."
+	exit 1 ;;
+esac
+
+one=/tmp/sccsd$$a
+two=/tmp/sccsd$$b
+
+old=$1
+new=$2
+shift
+shift
+
+for file
+	do
+	get -p -s -k $old $file > $one
+	case $? in
+	0)	get -p -s -k $new $file > $two
+		case $? in
+		0)	diff $one $two | pr -h "$file: $old vs $new" ;;
+		esac
+		;;
+	esac
+	done
+
+rm -f $one $two

@@ -1,0 +1,28 @@
+.TH PRT 1
+.SH  NAME
+prt \- print the history of an SCCS file
+.SH SYNOPSIS
+.B prt
+s.file1 s.file2 ...
+.SH DESCRIPTION
+.B Prt
+will print the contents of the delta table from each SCCS file given
+as an argument.
+The delta table contains a list of each of the deltas that have been made
+to the file.
+Each entry lists the version number of the delta, the date and time
+the delta was made,
+the programmer who made the delta, the serial number of the delta,
+the serial number of the previous delta,
+the number of lines added, deleted and left unchanged, and
+a comment describing why the change was made.
+.SH "SEE ALSO"
+get(1), delta(1), admin(1), what(1), sccsdiff(1)
+.SH AUTHOR
+This program was written by David R. Galloway.
+It is a re-implementation of the original Source
+Code Control System (SCCS)
+prt command, which was written at Bell Labs.
+.SH BUGS
+The original Bell version had many other flags, which are not
+supported by this implementation.

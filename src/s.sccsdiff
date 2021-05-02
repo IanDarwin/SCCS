@@ -1,0 +1,53 @@
+h00000
+s 00002/00001/00030
+d D 1.2 81/10/05 11:03:55 drg 2 1
+c Fix up usage message check.
+e
+s 00031/00000/00000
+d D 1.1 81/10/05 11:02:32 drg 1 0
+e
+u
+U
+t
+T
+I 1
+: "sccsdiff -- a simple version of the SCCS command"
+: "Copyright (c) 1981 by David R. Galloway"
+I 2
+: "%W% of %G%"
+E 2
+trap "rm -f $old $new > /dev/null; exit 1" 2
+
+case $# in
+D 2
+[123])
+E 2
+I 2
+[012])
+E 2
+	echo "usage: sccsdiff -r<old> -r<new> s.file1 s.file2 ..."
+	exit 1 ;;
+esac
+
+one=/tmp/sccsd$$a
+two=/tmp/sccsd$$b
+
+old=$1
+new=$2
+shift
+shift
+
+for file
+	do
+	get -p -s -k $old $file > $one
+	case $? in
+	0)	get -p -s -k $new $file > $two
+		case $? in
+		0)	diff $one $two | pr -h "$file: $old vs $new" ;;
+		esac
+		;;
+	esac
+	done
+
+rm -f $one $two
+E 1

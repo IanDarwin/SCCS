@@ -1,0 +1,60 @@
+.TH DELTA 1
+.SH  NAME
+delta \- add a new version to an SCCS file
+.SH SYNOPSIS
+.B delta
+[
+.B -p
+]
+s.file1 s.file2 ...
+.SH DESCRIPTION
+.B Delta
+will record any changes that have been made
+to the given SCCS files since
+the last time delta was used.
+If the name of an SCCS file is "s.alice", then the new version of the text
+will be read from the plaintext file "alice".
+.PP
+.B Delta
+will output a line asking for "comments ?".
+The user should type in a one or two line explanation of why the changes
+making up the delta were made.
+If the comments are more than one line long, each line but the last must
+have a '\\\' character as the last character on the line.
+The first line without a terminating '\\\' character ends the comments.
+.PP
+In order for
+.B delta
+to work,
+the file must have previously been "gotten" by the get(1) command with
+a "get -e".
+This will have produced a p-file (for example, p.alice).
+If the delta is successful, both the p-file and the plaintext file
+will be removed, leaving only the s-file.
+.PP
+The optional
+.B -p
+flag will cause delta to print a listing of the changes made since the last
+delta, in the format produced by diff(1).
+.PP
+If successful,
+.B delta
+will print the version number of the new version, followed by the number
+of lines added, deleted and left unchanged since the previous version.
+.SH FILES
+.TP 10
+/bin/diff
+Used to compute differences between versions
+.TP 10
+x-file
+(ex. x.alice) -- temporary file used to create new s-file.
+.SH "SEE ALSO"
+get(1), prt(1), admin(1), what(1), sccsdiff(1), diff(1)
+.SH AUTHOR
+This program was written by David R. Galloway.
+It is a re-implementation of the original Source
+Code Control System (SCCS)
+delta command, which was written at Bell Labs.
+.SH BUGS
+The original Bell version had many other flags, which are not
+supported by this implementation.

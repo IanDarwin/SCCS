@@ -1,0 +1,149 @@
+.TH GET 1
+.SH  NAME
+get \- retrieve a previous version of an SCCS file
+.SH SYNOPSIS
+.B get
+[
+.B -e
+]
+[
+.B -g
+]
+[
+.B -rmmm[.nnn]
+]
+s.file1 s.file2 ...
+.SH DESCRIPTION
+.B Get
+will retrieve plaintext copies of any version of the given SCCS files.
+The plaintext will be written into a file whose name is the same as
+the SCCS filename with the prefix "s." removed.
+For example, if the SCCS file is called "s.alice", then the plaintext
+will be written into a file called "alice".
+.PP
+By default,
+.B get
+will retrieve the most recent version of the file.
+The optional
+.B -r
+argument can be used to specify any of the versions that have been stored in
+the file.
+The version number is of the form mmm[.nnn],
+where mmm is the release number and nnn is the level number.
+If the level number is not given, the highest (most recent) level of the
+given release is extracted.
+In any case,
+.B get
+will print the version number of the version selected, followed by the
+number of lines in the plaintext file.
+.PP
+Normally, the plaintext file will be created with mode 0444, so that
+it can not be edited.
+The 
+.B -e
+flag
+tells get that you wish to make changes to the file, in order to create
+a new version using delta(1).
+The
+.B -e
+flag will make the plaintext file writable.
+In addition, the
+.B -e
+flag will produce a small p-file (ex. "p.alice"), which contains
+information of interest to delta.
+The p-file should not be touched by the user, and will be removed by delta.
+.PP
+The 
+.B -g
+flag causes get to go through all of the motions, but stop short of
+actually producing the plaintext file.
+This option is useful when you are trying to re-create a p-file that was
+accidently destroyed, for example.
+.PP
+Unless the
+.B -e
+flag is given,
+.B get
+will search the text for special SCCS keyword identifiers, and
+replace them with a corresponding identification string.
+These identification strings can be used to uniquely identify a particular
+source file.
+If placed in a character array, the string will be compiled into the binary
+file made from the source file, and both source and binary can be identified
+by use of the what(1) command.
+The following is a list of the available keyword identifiers, along with
+the identification string they are replaced by:
+.TP 5
+%Z%
+the four characters "@(#)", used by what(1) to find identification strings in source and binary
+files.
+.TP 5
+%I%
+the current version number
+.TP 5
+%M%
+the name of the plaintext file
+.TP 5
+%R%
+the current release number
+.TP 5
+%L%
+the current level number
+.TP 5
+%E%
+the date on which the delta was made, in the form YY/MM/DD
+.TP 5
+%G%
+the date on which the delta was made, in the form MM/DD/YY
+.TP 5
+%U%
+the time at which the delta was made
+.TP 5
+%F%
+the name of the s-file
+.TP 5
+%C%
+the current line number
+.TP 5
+%D%
+the current date, in the form YY/MM/DD
+.TP 5
+%H%
+the current date, in the form MM/DD/YY
+.TP 5
+%T%
+the current time
+.TP 5
+%A%
+a short form for the keyword string "%Z% %M% %I%%Z%"
+.TP 5
+%W%
+a short form for the keyword string "%Z%%M%\\t%I%"
+.PP
+Normally, if the
+.B -r
+flag specifies a version which is not found in the file,
+.B get
+will exit with a message to that effect.
+If the user wishes to produce a new release of the file (ex. version 2.1), then
+.B get
+should be invoked in the following way:
+.sp
+.ti +5
+.nf
+get -e -rnnn s.file
+.fi
+.sp
+where nnn is the new release number.
+When the delta command is invoked, it will place the new version into the file
+under the new release number.
+.SH "SEE ALSO"
+delta(1), prt(1), admin(1), what(1), sccsdiff(1)
+.SH AUTHOR
+This program was written by David R. Galloway.
+It is a re-implementation of the original Source
+Code Control System (SCCS)
+get command, which was written at Bell Labs.
+.SH BUGS
+The original Bell version had many other flags, which are not
+supported by this implementation.

@@ -1,0 +1,39 @@
+.TH ADMIN 1
+.SH  NAME
+admin \- create an SCCS file
+.SH SYNOPSIS
+.B admin
+\fB-i\fRfile
+s.file
+.SH DESCRIPTION
+.B Admin
+will create an SCCS file under the name
+.B s.file.
+The initial contents of the file will be taken from the file specified
+by the
+.B -i
+flag.
+.PP
+The name of the SCCS file must begin with the two characters "s.".
+Normally, the remainder of the name will be used as the name of the file
+that the SCCS file is recording
+(see get(1)).
+For example, if you want to record all of the versions of a file called "alice",
+then the SCCS file would be called "s.alice".
+.PP
+The modes of the SCCS file will be set to 0444.
+The file should only be modified by use of the delta(1) command.
+.SH "SEE ALSO"
+get(1), delta(1), what(1), prt(1), sccsdiff(1)
+.SH AUTHOR
+This program was written by David R. Galloway.
+It is a re-implementation of the original Source
+Code Control System (SCCS)
+admin command, which was written at Bell Labs.
+.SH BUGS
+The original Bell version had many other flags, which are not
+supported by this implementation.
+.PP
+The SCCS only understands ASCII text files.
+In particular, it may get upset about un-printable characters in the
+plaintext file.
