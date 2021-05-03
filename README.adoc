@@ -1,0 +1,9 @@
+= SCCS Reimplemented
+
+This is a reimplementation of SCCS, the original Version Control System (VCS) for Unix.
+AT&T's version of SCCS was, at the time, covered by restrictive licenses and copyright.
+This reimplementation was done by David R. Galloway at the University of Toronto during
+the early 1980's. 
+
+While it may not be of use to anyone, the code is being placed here almost exactly 
+as I received it from David (except for the addition of this README file).
